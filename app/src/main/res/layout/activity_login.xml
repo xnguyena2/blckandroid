@@ -1,0 +1,80 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height = "match_parent"
+    android:background="@drawable/background"
+    tools:context="paulo.nguyenphong.appxblockchainproject.LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification here!!"
+        android:id="@+id/TxtVNotification"
+        android:textSize="25dp"
+        android:textColor="#ff1519"
+        android:layout_below="@+id/EdTxPassword"
+        android:layout_alignLeft="@+id/EdTxPassword"
+        android:layout_alignStart="@+id/EdTxPassword" />
+
+    <EditText
+        android:layout_width = "350dp"
+        android:layout_height = "60dp"
+        android:background="@drawable/usernamebckgr"
+        android:id = "@+id/EdTxUserName"
+        android:textColorHighlight = "#ff7eff15"
+        android:layout_marginTop = "197dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:background="@drawable/passwordbckgr"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/EdTxPassword"
+        android:layout_below="@+id/EdTxUserName"
+        android:layout_alignLeft="@+id/EdTxUserName"
+        android:layout_alignStart="@+id/EdTxUserName" />
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:background="@drawable/loginbuttonbckgr"
+        android:id="@+id/BtnLogin"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/TxtVNotification"
+        android:layout_centerHorizontal="true" />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/BtnLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:text="Don't have account?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000" />
+
+        <TextView
+            android:text="Sign Up"
+            android:textColor="#1557ff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/BtnSignUp" />
+    </LinearLayout>
+
+    <Button
+        android:text="Admin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/startAdmin" />
+</RelativeLayout>

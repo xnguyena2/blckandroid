@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_transaction"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="paulo.nguyenphong.appxblockchainproject.TransactionActivity">
+
+    <TextView
+        android:text="Your Blance:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="17dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="95dp"
+        android:id="@+id/textView3"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3"
+        android:id="@+id/TxtBlance"
+        android:textSize="20sp"
+        android:textColor="@android:color/black" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout1"
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_marginTop="11dp">
+
+        <TextView
+            android:text="Reciver:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@android:color/black" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/EdtxReciverName"
+            android:hint="Name of Reciver" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout2"
+        android:layout_below="@+id/layout1"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_marginTop="11dp">
+
+        <TextView
+            android:text="Money :"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@android:color/black" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/EdtxMoney"
+            android:hint="Money" />
+    </LinearLayout>
+
+    <TextView
+        android:text="Notifcation here!!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TxtNotification"
+        android:layout_below="@+id/layout2"
+        android:layout_alignLeft="@+id/layout2"
+        android:layout_alignStart="@+id/layout2"
+        android:textColor="@android:color/holo_red_dark" />
+
+    <Button
+        android:text="Send"
+        android:layout_width="wrap_content"
+        android:id="@+id/BtnSendmoney"
+        android:layout_below="@+id/TxtNotification"
+        android:layout_alignLeft="@+id/TxtNotification"
+        android:layout_alignStart="@+id/TxtNotification"
+        android:layout_height="40dp" />
+
+    <Button
+        android:text="Get Notification"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/BtnSendmoney"
+        android:layout_alignStart="@+id/BtnSendmoney"
+        android:id="@+id/BtnGetnotification" />
+</RelativeLayout>
