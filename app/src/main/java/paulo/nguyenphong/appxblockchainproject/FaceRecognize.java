@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -35,8 +37,11 @@ import paulo.nguyenphong.facereconigze.graphic.FaceGraphic;
 
 public class FaceRecognize extends AppCompatActivity {
 
+    private double thresHold = 0.1;
+
     FaceRecognition faceRecognition;
     private Button BtnLogin,BtnSignup;
+    private TextView TxtNotification;
     Context context;
 
 
@@ -65,6 +70,7 @@ public class FaceRecognize extends AppCompatActivity {
         context = this;
         BtnLogin = (Button) findViewById(R.id.BtnFaceLogin);
         BtnSignup = (Button) findViewById(R.id.BtnFaceSignUp);
+        TxtNotification = (TextView)findViewById(R.id.TxtNotification);
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
@@ -72,6 +78,7 @@ public class FaceRecognize extends AppCompatActivity {
         BtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TxtNotification.setText("Notification");
                 Log.d(TAG, "login button pressed!!");
                 Log.d(TAG, "x:" + FaceGraphic.faceX + " ,y:" + FaceGraphic.faceY + " ,width:" + FaceGraphic.faceW + " ,height:" + FaceGraphic.faceH);
                 mCameraSource.takePicture(null, new CameraSource.PictureCallback() {
@@ -83,9 +90,14 @@ public class FaceRecognize extends AppCompatActivity {
                         if (FaceGraphic.faceX > 0) {
                             double[] bio = faceRecognition.generateBiometric(Bitmap.createBitmap(bmp, (int) FaceGraphic.faceX, (int) FaceGraphic.faceY,
                                     (int) FaceGraphic.faceW, (int) FaceGraphic.faceH), false);
+                            double value = faceRecognition.getDistance(bio);
 
-                            Log.i(TAG, "Value:" + faceRecognition.getDistance(bio));
+                            Log.i(TAG, "Value:" + value);
+
                             FaceGraphic.faceX = -1;
+                            if(value<thresHold)
+                                TxtNotification.setText("Login success!!");
+                            else TxtNotification.setText("Wrong User!!");
                         }
                     }
                 });
@@ -106,7 +118,8 @@ public class FaceRecognize extends AppCompatActivity {
                             double[] bio = faceRecognition.generateBiometric(Bitmap.createBitmap(bmp, (int) FaceGraphic.faceX, (int) FaceGraphic.faceY,
                                     (int) FaceGraphic.faceW, (int) FaceGraphic.faceH), true);
 
-                            Log.i(TAG, "Value:" + faceRecognition.getDistance(bio));
+                            //Log.i(TAG, "Value:" + faceRecognition.getDistance(bio));
+                            TxtNotification.setText("Registe success!!");
                             FaceGraphic.faceX = -1;
                         }
                     }

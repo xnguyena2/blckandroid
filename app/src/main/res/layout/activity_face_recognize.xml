@@ -41,6 +41,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SignUp" />
+
+        <TextView
+            android:id="@+id/TxtNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Notification"
+            android:textColor="@color/colorAccent" />
     </LinearLayout>
 
 </RelativeLayout>

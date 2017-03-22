@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -47,10 +48,13 @@ public class LoginActivity extends Activity implements WebsocketCallBack {
     boolean isConnected = false;
     FaceRecognition faceRecognition;
 
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = this;
         blockchain = new ConnectBlockchain(this);
         blockchain.connectWebSocket();
         Login = (Button) findViewById(R.id.BtnLogin);
@@ -100,8 +104,60 @@ public class LoginActivity extends Activity implements WebsocketCallBack {
                 startActivity(intent);
             }
         });
+/*
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                //TODO your background code
+                double thresHold = 0.09;
+                faceRecognition = new FaceRecognition(context);
+                faceRecognition.loadEigenVectors();
+                double[][][] listBio = new double[153][][];
+                File f = new File("/storage/emulated/0/Download/faces94/faces94");
+                File[] files = f.listFiles();
+                int i = 0;
+                for (File inFile : files) {
+                    if (inFile.isDirectory()) {
+                        // is directory
+                        Log.i(TAG, "f:" + inFile.getAbsoluteFile());
+                        listBio[i] = faceRecognition.generateBiometric(inFile.getAbsoluteFile().toString(), "jpg");
+                        i++;
+                    }
+                }
 
-        /*faceRecognition = new FaceRecognition(this);
+                //FRR
+                int fail = 0, total = 0;
+                for (int ii = 0; ii < listBio.length; ii++) {
+                    for (int jj = 0; jj < listBio[ii].length; jj++) {
+                        for (int kk = jj + 1; kk < listBio[ii].length; kk++) {
+                            if (faceRecognition.getDistance(listBio[ii][jj], listBio[ii][kk]) > thresHold)
+                                fail++;
+                            total++;
+                        }
+                    }
+                }
+                Log.i(TAG, "FRR:" + (((double) fail / total) * 100) + ", fail:" + fail + ", total:" + total);
+
+                fail = 0;
+                total = 0;
+                //FAR
+                for (int ii = 0; ii < listBio.length; ii++) {
+                    for (int jj = ii + 1; jj < listBio.length; jj++) {
+                        for (int kk = 0; kk < listBio[ii].length; kk++) {
+                            for (int ll = 0; ll < listBio[jj].length; ll++) {
+                                if (faceRecognition.getDistance(listBio[ii][kk], listBio[jj][ll]) < thresHold)
+                                    fail++;
+                                total++;
+                            }
+                        }
+                    }
+                }
+                Log.i(TAG, "FAR:" + (((double) fail / total) * 100) + ", fail:" + fail + ", total:" + total);
+
+            }
+        });
+
+        faceRecognition = new FaceRecognition(this);
         faceRecognition.loadEigenVectors();
         double[] bio = faceRecognition.generateBiometric(BitmapFactory.decodeFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/9326871.1.jpg"),false);
 
