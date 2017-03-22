@@ -174,10 +174,29 @@ public class ImageUploadActivity extends Activity implements ButtonClickInterfac
 
         if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             fileUploadFullpath = ImageFilePath.getPath(ImageUploadActivity.this, data.getData());
-            uploadImage(data.getData());
+            File actualImage = null;
+            File compressedImage = null;
+            try {
+                actualImage = FileUtil.from(this, Uri.fromFile(new File(fileUploadFullpath)));
+
+                compressedImage = new Compressor.Builder(this)
+                        //.setMaxWidth(640)
+                        //.setMaxHeight(480)
+                        .setQuality(90)
+                        .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                        .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_PICTURES).getAbsolutePath())
+                        .build()
+                        .compressToFile(actualImage);
+                actualImage.delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            fileUploadFullpath = compressedImage.getAbsolutePath();
+            uploadImage(Uri.fromFile(compressedImage));//(data.getData());
         } else if (requestCode == CAMERA_IMAGE_REQUEST && resultCode == RESULT_OK) {
             File actualImage = null;
-            File compressedImage;
+            File compressedImage = null;
             try {
                 actualImage = FileUtil.from(this, Uri.fromFile(getCameraFile()));
 
@@ -194,7 +213,8 @@ public class ImageUploadActivity extends Activity implements ButtonClickInterfac
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            uploadImage(Uri.fromFile(getCameraFile()));//getCameraCompressedFile()
+            fileUploadFullpath = compressedImage.getAbsolutePath();
+            uploadImage(Uri.fromFile(compressedImage));//getCameraFile()//getCameraCompressedFile()
         }
     }
 

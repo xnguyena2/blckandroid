@@ -242,7 +242,7 @@ public class Camera2VideoFragment extends Fragment
      */
     private static Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
-            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
+            if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 480) {
                 return size;
             }
         }
@@ -624,8 +624,8 @@ public class Camera2VideoFragment extends Fragment
             mNextVideoAbsolutePath = getVideoFilePath(getActivity());
         }
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
-        mMediaRecorder.setVideoEncodingBitRate(10000000);//3000000
-        mMediaRecorder.setVideoFrameRate(30);//(16)
+        mMediaRecorder.setVideoEncodingBitRate(400000);//10000000
+        mMediaRecorder.setVideoFrameRate(15);//(30)
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());//480, 640);//
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);

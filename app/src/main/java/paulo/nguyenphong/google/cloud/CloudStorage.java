@@ -52,7 +52,7 @@ public class CloudStorage {
                 InputStreamContent content = new InputStreamContent(contentType, stream);
 
                 Storage.Objects.Insert insert = storage.objects().insert(bucketName, null, content);
-                objectName = hashName + "_" + file.getName();
+                objectName = hashName + file.getName().substring(file.getName().indexOf('.'));
                 insert.setName(objectName);
                 insert.execute();
 

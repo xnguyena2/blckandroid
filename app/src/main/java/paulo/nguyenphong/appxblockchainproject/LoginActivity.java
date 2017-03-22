@@ -3,8 +3,10 @@ package paulo.nguyenphong.appxblockchainproject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -32,6 +34,7 @@ import java.net.URLConnection;
 
 import paulo.nguyenphong.blockchain.ConnectBlockchain;
 import paulo.nguyenphong.callbackInterface.WebsocketCallBack;
+import paulo.nguyenphong.facereconigze.FaceRecognition;
 
 public class LoginActivity extends Activity implements WebsocketCallBack {
     String TAG = "EYEVERTIFY";
@@ -42,6 +45,7 @@ public class LoginActivity extends Activity implements WebsocketCallBack {
     public static ConnectBlockchain blockchain;// = new ConnectBlockchain();
     String username,userpassword;
     boolean isConnected = false;
+    FaceRecognition faceRecognition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,7 @@ public class LoginActivity extends Activity implements WebsocketCallBack {
                             userpassword = psw;
                             if (isConnected) {
                                 blockchain.sendMsg("{ \"type\": \"login\", \"username\": \"" + usn + "\", \"passwords\": \"" + psw + "\", \"v\":1 }");
-                            }else{
+                            } else {
                                 blockchain.connectWebSocket();
                                 Notification.setText("Sorry this app disconnect with blockchain, try again in few second!!");
                             }
@@ -89,13 +93,20 @@ public class LoginActivity extends Activity implements WebsocketCallBack {
         adminStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent(ctx, AdminActivity.class);
+                Intent intent = new Intent(ctx, FaceRecognize.class);
                 //EditText editText = (EditText) findViewById(R.id.edit_message);
                 //String message = editText.getText().toString();
                 //intent.putExtra("USERNAME", username);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
+
+        /*faceRecognition = new FaceRecognition(this);
+        faceRecognition.loadEigenVectors();
+        double[] bio = faceRecognition.generateBiometric(BitmapFactory.decodeFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/9326871.1.jpg"),false);
+
+        Log.i(TAG, "Value:" + faceRecognition.getDistance(bio));*/
+
     }
 
     @Override

@@ -14,8 +14,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import paulo.nguyenphong.callbackInterface.WebsocketCallBack;
 
@@ -28,7 +32,11 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
     public static final String RETURN_VIDEO_HASH_NAME = "HASH_NAME";
     private static final String TAG = "EYEVERTIFY";
 
+    private Timer refreshTimer;
+
     boolean isConnected = true;
+
+    String userCredentialListID[];
 
     EditText email, password, firstname, lastname, birthday, sex, nationality, naturality, naturalityuf, credential,
             organissuingidentity, dateissuingidentity, organidentitymilitar, fathername, mothername;
@@ -51,6 +59,46 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
         getID();
         setEventHandle();
         LoginActivity.blockchain.changeCallBack(this);
+    }
+
+    private void timerTick() {
+        //This method is called directly by the timer
+        //and runs in the same thread as the timer.
+
+        //We call the method that will work with the UI
+        //through the runOnUiThread method.
+        this.runOnUiThread(timerTickEventHandle);
+    }
+
+    private Runnable timerTickEventHandle = new Runnable() {
+        public void run() {
+            if (isConnected) {
+                LoginActivity.blockchain.sendMsg(
+                        "{ " +
+                                "\"type\": \"getuserinfomation\"," +
+                                "\"username\": \"" + Semail + "\"," +
+                                "\"v\":1 " +
+                                "}"
+                );
+                pause();
+            } else LoginActivity.blockchain.connectWebSocket();
+        }
+
+    };
+
+    public void resume() {
+        refreshTimer = new Timer();
+        refreshTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timerTick();
+            }
+
+        }, 0, 5000);
+    }
+
+    public void pause() {
+        refreshTimer.cancel();
     }
 
     private void openImageUploadActivity(int IDResult) {
@@ -89,7 +137,7 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
         addBackImg = (Button) findViewById(R.id.addBackImgBtn);
         addVideo = (Button) findViewById(R.id.addVideoBtn);
         signupBtn = (ImageView) findViewById(R.id.BtnSignUp);
-        Notification = (TextView) findViewById(R.id.TxtNotification);
+        Notification = (TextView) findViewById(R.id.TxtVNotification);
     }
 
     void setEventHandle() {
@@ -145,7 +193,7 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
                                                 "}"
                                 );
                             else LoginActivity.blockchain.connectWebSocket();
-                        }else showNotification("Wrong email type!!");
+                        } else showNotification("Wrong email type!!");
                     } else
                         showNotification("Empty username or password!");
                 } else
@@ -183,7 +231,7 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
     void getInfomation() {
         Semail = email.getText().toString();
         Spassword = password.getText().toString();
-        Scredential = credential.getText().toString();
+        Scredential = credential.getText().toString().replace(" ", "_");
         Sfirstname = firstname.getText().toString();
         Slastname = lastname.getText().toString();
         Ssex = sex.getText().toString();
@@ -191,7 +239,7 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
         Snationality = nationality.getText().toString();
         Snaturality = naturality.getText().toString();
         Snaturalityuf = naturalityuf.getText().toString();
-        Sorganissuingidentity=organissuingidentity.getText().toString();
+        Sorganissuingidentity = organissuingidentity.getText().toString();
         Sdateissuingidentity = dateissuingidentity.getText().toString();
         Sorganidentitymilitar = organidentitymilitar.getText().toString();
         Sfathername = fathername.getText().toString();
@@ -216,6 +264,9 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
         });
     }
 
+    int currentSettingIndex = 0;
+    boolean createUserSuccess = false,getUserinfomation = false;
+    String currentTxid = null;
     @Override
     public void onRecivedMsg(String msg) {
 
@@ -223,7 +274,67 @@ public class CredentialRegistrationActivity extends Activity implements Websocke
             JSONObject mainObject = new JSONObject(msg);
             String message = mainObject.getString("msg");
             if (message.equals("createuserinfo_sucess")) {
-                openTransactionActivity();
+                createUserSuccess = true;
+                //openTransactionActivity();
+            } else if (message.equals("chainstats")) {
+                if (userCredentialListID != null && currentSettingIndex >= userCredentialListID.length) {
+                    openTransactionActivity();
+                } else {
+                    showNotification("finished:" + currentSettingIndex + "/3");
+                    JSONObject chainstats = mainObject.getJSONObject("blockstats");
+                    try {
+                        JSONArray trList = chainstats.getJSONArray("transactions");
+                        if (trList.length() > 0) {
+                            JSONObject jO = trList.getJSONObject(0);
+                            currentTxid = jO.getString("txid");
+                            Log.d(TAG, "current txid:" + currentTxid);
+                        }
+                    }catch(JSONException jEx) {
+                        Log.d(TAG, jEx.toString());
+                    }
+                    if (createUserSuccess && userCredentialListID == null) {
+                        LoginActivity.blockchain.sendMsg(
+                                "{ " +
+                                        "\"type\": \"getuserinfomation\"," +
+                                        "\"username\": \"" + Semail + "\"," +
+                                        "\"v\":1 " +
+                                        "}"
+                        );
+                        createUserSuccess = false;
+                    } else {
+                        Log.d(TAG, "set block ID:" + userCredentialListID[currentSettingIndex]);
+                        LoginActivity.blockchain.sendMsg(
+                                "{ " +
+                                        "\"type\": \"setblockid\"," +
+                                        "\"blockid\": \"" + userCredentialListID[currentSettingIndex] + "\"," +
+                                        "\"realid\": \"" + currentTxid + "\"," +
+                                        "\"v\":1 " +
+                                        "}"
+                        );
+                        currentSettingIndex++;
+                    }
+                }
+            } else if (message.equals("user_infomation")) {
+                showNotification("Checking user status!!");
+                JSONObject usIf = new JSONObject(mainObject.getString("userinfomation"));
+                JSONArray credentidlList = usIf.getJSONArray("credentiallistblock");
+                Log.d(TAG, "Length :" + credentidlList.length());
+                userCredentialListID = new String[credentidlList.length()];
+                for (int i = 0; i < credentidlList.length(); i++) {
+                    userCredentialListID[i] = credentidlList.getString(i);
+                }
+                Log.d(TAG, "set block ID:" + userCredentialListID[currentSettingIndex]);
+                LoginActivity.blockchain.sendMsg(
+                        "{ " +
+                                "\"type\": \"setblockid\"," +
+                                "\"blockid\": \"" + userCredentialListID[currentSettingIndex] + "\"," +
+                                "\"realid\": \"" + currentTxid + "\"," +
+                                "\"v\":1 " +
+                                "}"
+                );
+                currentSettingIndex++;
+            } else if (message.equals("error when get userinfomation!")) {
+                resume();
             } else {
                 showNotification(message);
             }

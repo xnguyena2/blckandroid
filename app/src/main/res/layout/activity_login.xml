@@ -71,10 +71,10 @@
     </LinearLayout>
 
     <Button
-        android:text="Admin"
+        android:id="@+id/startAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/startAdmin" />
+        android:text="FaceRecogs" />
 </RelativeLayout>

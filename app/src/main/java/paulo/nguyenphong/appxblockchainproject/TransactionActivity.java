@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +16,6 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import paulo.nguyenphong.appxblockchainproject.LoginActivity;
 import paulo.nguyenphong.callbackInterface.WebsocketCallBack;
 
 
@@ -27,10 +25,11 @@ public class TransactionActivity extends Activity implements WebsocketCallBack {
     Context ctx;
     Button BtnSendmoney, BtnGetnotification;
     EditText EdtReciver, EdtNumberMoney;
-    TextView Notification, TxtBlance;
+    TextView Notification, TxtBlance,TxtPrivateKey,TxtPublicKey;
     String username = "", userpassword = "";
-    private Timer myEyeDetectTimer;
-    boolean isConnected = true, updateBlance = true;
+    private Timer refreshTimer;
+    boolean isConnected = true, updateBlance = true,isGetKey = true;
+    String privateKey,publicKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +42,14 @@ public class TransactionActivity extends Activity implements WebsocketCallBack {
         EdtNumberMoney = (EditText) findViewById(R.id.EdtxMoney);
         Notification = (TextView) findViewById(R.id.TxtNotification);
         TxtBlance = (TextView) findViewById(R.id.TxtBlance);
+        TxtPrivateKey = (TextView)findViewById(R.id.TxtPrivateKey);
+        TxtPublicKey = (TextView)findViewById(R.id.TxtPublicKey);
         LoginActivity.blockchain.changeCallBack(this);
-        myEyeDetectTimer = new Timer();
-        myEyeDetectTimer.schedule(new TimerTask() {
+        refreshTimer = new Timer();
+        refreshTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                EyeDetectTimerMethod();
+                timerTick();
             }
 
         }, 0, 5000);
@@ -105,21 +106,31 @@ public class TransactionActivity extends Activity implements WebsocketCallBack {
         });
     }
 
-    private void EyeDetectTimerMethod() {
+    private void timerTick() {
         //This method is called directly by the timer
         //and runs in the same thread as the timer.
 
         //We call the method that will work with the UI
         //through the runOnUiThread method.
-        this.runOnUiThread(EyeDetectTimer_Tick);
+        this.runOnUiThread(timerTickEventHandle);
     }
 
-    private Runnable EyeDetectTimer_Tick = new Runnable() {
+    private Runnable timerTickEventHandle = new Runnable() {
         public void run() {
             if (updateBlance) {
                 if (isConnected) {
-                    LoginActivity.blockchain.sendMsg("{ \"type\": \"getblance\", \"username\": \"" + username + "\", \"passwords\": \"" + userpassword + "\", \"v\":1 }");
-                    updateBlance = false;
+                    if (isGetKey) {
+                        LoginActivity.blockchain.sendMsg(
+                                "{ " +
+                                        "\"type\": \"getuserinfomation\"," +
+                                        "\"username\": \"" + username + "\"," +
+                                        "\"v\":1 " +
+                                        "}"
+                        );
+                    } else {
+                        LoginActivity.blockchain.sendMsg("{ \"type\": \"getblance\", \"username\": \"" + username + "\", \"passwords\": \"" + userpassword + "\", \"v\":1 }");
+                        updateBlance = false;
+                    }
                 } else LoginActivity.blockchain.connectWebSocket();
             }
         }
@@ -136,6 +147,24 @@ public class TransactionActivity extends Activity implements WebsocketCallBack {
                 String bl = mainObject.getString("bl");
                 setBlance(bl);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else if(msg.indexOf("user_infomation")>0) {
+            isGetKey = false;
+            try {
+                JSONObject mainObject = new JSONObject(msg);
+                JSONObject userInfomation = new JSONObject(mainObject.getString("userinfomation"));
+                privateKey = userInfomation.getString("privatekey");
+                publicKey = userInfomation.getString("publickey");
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        // change UI elements here
+                        TxtPrivateKey.setText(privateKey);
+                        TxtPublicKey.setText(publicKey);
+                    }
+                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }

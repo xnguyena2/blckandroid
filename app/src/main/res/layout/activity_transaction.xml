@@ -109,4 +109,42 @@
         android:layout_below="@+id/BtnSendmoney"
         android:layout_alignStart="@+id/BtnSendmoney"
         android:id="@+id/BtnGetnotification" />
+
+    <TextView
+        android:text="Private Key:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/BtnGetnotification"
+        android:layout_alignStart="@+id/BtnGetnotification"
+        android:layout_marginTop="10dp"
+        android:id="@+id/textView"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:id="@+id/TxtPrivateKey"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView"
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:text="Public Key:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TxtPrivateKey"
+        android:layout_alignStart="@+id/textView"
+        android:id="@+id/textView4"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TxtPrivateKey"
+        android:id="@+id/TxtPublicKey"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView" />
 </RelativeLayout>

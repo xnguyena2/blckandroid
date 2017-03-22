@@ -19,6 +19,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="face" />
+
         <activity
             android:name=".ImageUploadActivity"
             android:label="@string/app_name"
@@ -61,6 +69,10 @@
         <activity
             android:name=".NotificationActivity"
             android:label="@string/title_activity_notification"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".FaceRecognize"
+            android:label="@string/title_activity_face_recognize"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

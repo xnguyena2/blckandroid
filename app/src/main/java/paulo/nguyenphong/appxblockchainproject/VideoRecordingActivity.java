@@ -36,6 +36,7 @@ public class VideoRecordingActivity extends Activity implements RecognitionListe
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 1001;
     private static final int REQUEST_VIDEO_CAPTURE = 1002;
     private static final String TAG = "EYEVERTIFY";
+    private static final String VIDEO_TYPE = ".mp4";
 
     boolean isVoiceRecogize = false;
     boolean isDeviceSpeechSuport = true;
@@ -152,8 +153,7 @@ public class VideoRecordingActivity extends Activity implements RecognitionListe
 
     public void uploadVideo(String pathfile) {
         try {
-            File file = new File(pathfile);
-            videoHashName = Hash.createHash() + "_" + file.getName();
+            videoHashName = Hash.createHash();
             CloudStorage.uploadFile(this, "paulophototest", pathfile, videoHashName);
         } catch (Exception e) {
             Log.d(TAG, "Exception: " + e.getMessage());
@@ -164,7 +164,7 @@ public class VideoRecordingActivity extends Activity implements RecognitionListe
     public void finishedActivity() {
         try {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra(RegistrationActivity.RETURN_VIDEO_HASH_NAME, videoHashName);
+            returnIntent.putExtra(RegistrationActivity.RETURN_VIDEO_HASH_NAME, videoHashName+VIDEO_TYPE);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
         } catch (Exception e) {
